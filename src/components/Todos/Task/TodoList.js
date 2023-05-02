@@ -4,11 +4,12 @@ import { SearchOutlined, FlagFilled } from "@ant-design/icons";
 import { Button, Input, Space, Table, Badge, Avatar, Tooltip } from "antd";
 import Highlighter from "react-highlight-words";
 import moment from "moment";
+import "moment/locale/fr";
 import AddTodo from "./AddTodo";
 
 const TodoList = () => {
   const steps = useSelector((state) => state.stepReducer);
-  const tasks = useSelector((state) => state.taskReducer);
+  const tasks = useSelector((state) => state.todoReducer);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
 
@@ -150,22 +151,22 @@ const TodoList = () => {
       width: "10%",
       render: (priority) => (
         <>
-          {priority === "Normal" && (
+          {priority === "Normale" && (
             <Tooltip title={priority}>
               <FlagFilled style={{ fontSize: "1.3em", color: "#6FDDFF" }} />
             </Tooltip>
           )}
-          {priority === "Urgent" && (
+          {priority === "Urgente" && (
             <Tooltip title={priority}>
               <FlagFilled style={{ fontSize: "1.3em", color: "red" }} />
             </Tooltip>
           )}
-          {priority === "Élevé" && (
+          {priority === "Élevée" && (
             <Tooltip title={priority}>
               <FlagFilled style={{ fontSize: "1.3em", color: "Orange" }} />
             </Tooltip>
           )}
-          {priority === "Bas" && (
+          {priority === "Basse" && (
             <Tooltip title={priority}>
               <FlagFilled style={{ fontSize: "1.3em", color: "grey" }} />
             </Tooltip>
@@ -183,27 +184,27 @@ const TodoList = () => {
     },
   ];
 
-  const data = tasks.map((task) => {
-    return {
-      key: task._id,
-      task: task.name,
-      assigne: `${task.last_name && task.last_name} ${
-        task.first_name && task.first_name
-      }`,
-      priority: task.priority && task.priority,
-      deadline: task.deadline && moment(task.deadline).format("LLL"),
-      step: task.step && task.step.name,
-    };
-  });
-
-  // console.log("data", data);
+  const data = tasks
+    .sort((a, b) => moment(b.createdAt) - moment(a.createdAt))
+    .map((task) => {
+      return {
+        key: task._id,
+        task: task.name,
+        assigne: `${task.last_name && task.last_name} ${
+          task.first_name && task.first_name
+        }`,
+        priority: task.priority && task.priority,
+        deadline: task.deadline && moment(task.deadline).format("L"),
+        step: task.step && task.step.name,
+      };
+    });
 
   return (
     <div>
-      {steps.map((step) => {
+      {steps.map((step, index) => {
         const countAsk = data.filter((el) => el.step === step.name);
         return (
-          <div className="mb-2">
+          <div className="mb-2" key={index}>
             <Badge count={countAsk.length}>
               <Avatar
                 style={{
@@ -215,7 +216,7 @@ const TodoList = () => {
                 {step.name.toUpperCase()}
               </Avatar>
             </Badge>
-            <AddTodo />
+            <AddTodo step={step} />
 
             <div>
               <Table

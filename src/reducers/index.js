@@ -1,8 +1,8 @@
 import { combineReducers } from "redux";
 import stepReducer from "./step.reducer";
-import taskReducer from "./task.reducer";
+import todoReducer from "./todo.reducer";
 
 export default combineReducers({
   stepReducer,
-  taskReducer,
+  todoReducer,
 });

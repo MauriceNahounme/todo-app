@@ -9,12 +9,12 @@ import rootReducer from "./reducers";
 import { getSteps } from "./actions/step.actions";
 
 import logger from "redux-logger";
-import { getTasks } from "./actions/task.actions";
+import { getTodos } from "./actions/todo.actions";
 
 const store = createStore(rootReducer, applyMiddleware(thunk, logger));
 
 store.dispatch(getSteps());
-store.dispatch(getTasks());
+store.dispatch(getTodos());
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
