@@ -6,12 +6,14 @@ import Highlighter from "react-highlight-words";
 import moment from "moment";
 import "moment/locale/fr";
 import AddTodo from "./AddTodo";
+import ChangeStep from "./ChangeStep";
 
 const TodoList = () => {
   const steps = useSelector((state) => state.stepReducer);
   const tasks = useSelector((state) => state.todoReducer);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [selectedRowKeys, setSelectedRowKeys] = useState();
 
   const searchInput = useRef(null);
 
@@ -199,34 +201,53 @@ const TodoList = () => {
       };
     });
 
+  const onSelectChange = (newSelectedRowKeys) => {
+    // console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+    if (newSelectedRowKeys.length === 0) {
+      setSelectedRowKeys("");
+    }
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
   return (
     <div>
-      {steps.map((step, index) => {
-        const countAsk = data.filter((el) => el.step === step.name);
-        return (
-          <div className="mb-2" key={index}>
-            <Badge count={countAsk.length}>
-              <Avatar
-                style={{
-                  backgroundColor: `${step.color}`,
-                  width: 80,
-                }}
-                shape="square"
-              >
-                {step.name.toUpperCase()}
-              </Avatar>
-            </Badge>
-            <AddTodo step={step} />
+      {steps &&
+        steps.map((step, index) => {
+          const countAsk = data.filter((el) => el.step === step.name);
+          return (
+            <div className="mb-2" key={index}>
+              <Badge count={countAsk.length}>
+                <Avatar
+                  style={{
+                    backgroundColor: `${step.color}`,
+                    width: 80,
+                  }}
+                  shape="square"
+                >
+                  {step.name.toUpperCase()}
+                </Avatar>
+              </Badge>
 
-            <div>
-              <Table
-                columns={columns}
-                dataSource={data.filter((el) => el.step === step.name)}
-              />
+              <AddTodo step={step} />
+              {selectedRowKeys && (
+                <ChangeStep step={step} ids={selectedRowKeys} />
+              )}
+
+              <div className="mb-4">
+                <Table
+                  columns={columns}
+                  dataSource={data.filter((el) => el.step === step.name)}
+                  rowSelection={rowSelection}
+                />
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
     </div>
   );
 };

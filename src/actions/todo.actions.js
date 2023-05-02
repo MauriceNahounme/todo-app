@@ -33,12 +33,14 @@ export const addTodo = (todo) => {
   };
 };
 
-export const updateTodo = (idTodo) => {
+export const changeStep = (idTodo, step) => {
   return (dispatch) => {
     return axios
-      .put(`${process.env.REACT_APP_API_URL}/task/${idTodo}`)
-      .then((value) => {
-        dispatch({ type: PUT_TASK, payload: { idTodo } });
+      .put(`${process.env.REACT_APP_API_URL}/task/${idTodo}`, {
+        step: step._id,
+      })
+      .then(() => {
+        dispatch({ type: PUT_TASK, payload: { idTodo, step } });
       })
       .catch((err) => {
         console.log(err);

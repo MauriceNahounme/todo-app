@@ -8,9 +8,7 @@ const taskReducer = (state = initialState, action) => {
       return action.payload;
 
     case PUT_TASK:
-      return {
-        ...state,
-      };
+      return state;
 
     default:
       return state;
