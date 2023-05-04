@@ -1,5 +1,5 @@
-![Texte alternatif](./public/list.png "Capture d'écran")
-![Texte alternatif](./public/table.png "Capture d'écran")
+![Texte alternatif](./public/listt.png "Capture d'écran")
+![Texte alternatif](./public/tablee.png "Capture d'écran")
 
 # Getting Started with Create React App
 
