@@ -3,6 +3,7 @@ import axios from "axios";
 export const GET_TASKS = "GET_TASKS";
 export const POST_TASK = "POST_TASK";
 export const PUT_TASK = "PUT_TASK";
+export const GET_VIEW = "GET_VIEW";
 
 export const getTodos = () => {
   return (dispatch) => {
@@ -45,5 +46,11 @@ export const changeStep = (idTodo, step) => {
       .catch((err) => {
         console.log(err);
       });
+  };
+};
+
+export const getView = (view) => {
+  return (dispatch) => {
+    dispatch({ type: GET_VIEW, payload: view });
   };
 };

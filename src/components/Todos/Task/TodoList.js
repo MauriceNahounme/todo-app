@@ -1,6 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { SearchOutlined, FlagFilled } from "@ant-design/icons";
+import { SearchOutlined, FlagFilled, SyncOutlined } from "@ant-design/icons";
 import { Button, Input, Space, Table, Badge, Avatar, Tooltip } from "antd";
 import Highlighter from "react-highlight-words";
 import moment from "moment";
@@ -14,6 +14,7 @@ const TodoList = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState();
+  const [loading, setLoading] = useState(false);
 
   const searchInput = useRef(null);
 
@@ -144,7 +145,23 @@ const TodoList = () => {
       dataIndex: "assign",
       key: "assign",
       width: "20%",
-      ...getColumnSearchProps("assign"),
+      render: (assign) => (
+        <>
+          {assign.last && assign.first && (
+            <Tooltip title={assign.first + " " + assign.last}>
+              <Avatar
+                style={{
+                  backgroundColor: "orange",
+                  verticalAlign: "middle",
+                }}
+                size="large"
+              >
+                {assign.first?.slice(0, 1) + assign.last?.slice(0, 1)}
+              </Avatar>
+            </Tooltip>
+          )}
+        </>
+      ),
     },
     {
       title: "Priorité",
@@ -192,9 +209,10 @@ const TodoList = () => {
       return {
         key: task._id,
         task: task.name,
-        assigne: `${task.last_name && task.last_name} ${
-          task.first_name && task.first_name
-        }`,
+        assign: {
+          last: task.assign && `${task.assign?.last_name}`,
+          first: task.assign && `${task.assign?.first_name}`,
+        },
         priority: task.priority && task.priority,
         deadline: task.deadline && moment(task.deadline).format("L"),
         step: task.step && task.step.name,
@@ -214,41 +232,60 @@ const TodoList = () => {
     onChange: onSelectChange,
   };
 
+  useEffect(() => {
+    if (steps.length && tasks.length) {
+      setLoading(true);
+    }
+  }, [steps, tasks]);
+
   return (
-    <div>
-      {steps &&
-        steps.map((step, index) => {
-          const countAsk = data.filter((el) => el.step === step.name);
-          return (
-            <div className="mb-2" key={index}>
-              <Badge count={countAsk.length}>
-                <Avatar
-                  style={{
-                    backgroundColor: `${step.color}`,
-                    width: 80,
-                  }}
-                  shape="square"
-                >
-                  {step.name.toUpperCase()}
-                </Avatar>
-              </Badge>
+    <>
+      <div>
+        {steps &&
+          steps.map((step, index) => {
+            const countAsk = data.filter((el) => el.step === step.name);
+            return (
+              <div className="mb-2" key={index}>
+                <Badge count={countAsk.length}>
+                  <Avatar
+                    style={{
+                      backgroundColor: `${step.color}`,
+                      width: 80,
+                    }}
+                    shape="square"
+                  >
+                    {step.name.toUpperCase()}
+                  </Avatar>
+                </Badge>
 
-              <AddTodo step={step} />
-              {selectedRowKeys && (
-                <ChangeStep step={step} ids={selectedRowKeys} />
-              )}
+                <AddTodo step={step} />
+                {selectedRowKeys && (
+                  <ChangeStep step={step} ids={selectedRowKeys} />
+                )}
 
-              <div className="mb-4">
-                <Table
-                  columns={columns}
-                  dataSource={data.filter((el) => el.step === step.name)}
-                  rowSelection={rowSelection}
-                />
+                <div className="mb-4">
+                  <Table
+                    columns={columns}
+                    dataSource={data.filter((el) => el.step === step.name)}
+                    rowSelection={rowSelection}
+                    onRow={(record) => {
+                      return {
+                        onClick: (e) => console.log(record),
+                      };
+                    }}
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })}
-    </div>
+            );
+          })}
+      </div>
+
+      <div className="text-center mt-5" style={{ height: "100vh" }}>
+        {!loading && (
+          <SyncOutlined style={{ fontSize: "2.2em", color: "blue" }} spin />
+        )}
+      </div>
+    </>
   );
 };
 

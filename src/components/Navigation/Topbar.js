@@ -5,20 +5,20 @@ import {
   DatabaseOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
+import { useDispatch } from "react-redux";
+import { getView } from "../../actions/todo.actions";
 
 const Topbar = () => {
+  const dispatch = useDispatch();
+
   const [current, setCurrent] = useState("list");
   const onClick = (e) => {
-    console.log("click ", e);
+    // console.log("click ", e);
     setCurrent(e.key);
+    dispatch(getView(e.key));
   };
 
   const items = [
-    {
-      label: "Project name",
-      key: "project",
-      disabled: true,
-    },
     {
       label: "List",
       key: "list",
@@ -29,11 +29,11 @@ const Topbar = () => {
       key: "table",
       icon: <DatabaseOutlined />,
     },
-    {
-      label: "Calendrier",
-      key: "calendar",
-      icon: <CalendarOutlined />,
-    },
+    // {
+    //   label: "Calendrier",
+    //   key: "calendar",
+    //   icon: <CalendarOutlined />,
+    // },
   ];
 
   return (
