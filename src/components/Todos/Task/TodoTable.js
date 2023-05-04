@@ -83,6 +83,28 @@ const TodoTable = () => {
                               </Tooltip>
                             )}
                           </div>
+
+                          <div>
+                            {todo.assign && (
+                              <Tooltip
+                                title={
+                                  todo.assign.first_name +
+                                  " " +
+                                  todo.assign.last_name
+                                }
+                              >
+                                <Avatar
+                                  style={{
+                                    backgroundColor: "orange",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  {todo.assign.first_name?.slice(0, 1) +
+                                    todo.assign.last_name?.slice(0, 1)}
+                                </Avatar>
+                              </Tooltip>
+                            )}
+                          </div>
                           <Meta
                             description={
                               todo.deadline && moment(todo.deadline).format("L")
